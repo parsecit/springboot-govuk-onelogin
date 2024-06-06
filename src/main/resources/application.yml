@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: OneLogin
+  mvc:
+    view:
+      prefix: /WEB-INF/pages/
+      suffix: .jsp
+  security:
+    oauth2:
+      client:
+        registration:
+          onelogin:
+            client-id: ${ONELOGIN_CLIENT_ID}
+            client-authentication-method: private_key_jwt
+            authorization-grant-type: authorization_code
+            scope: openid
+            client-name: OneLogin
+        provider:
+          onelogin:
+            authorization-uri: https://oidc.integration.account.gov.uk/authorize
+            token-uri: https://oidc.integration.account.gov.uk/token
+            jwk-set-uri: https://oidc.integration.account.gov.uk/.well-known/jwks.json
+            issuer-uri: https://oidc.integration.account.gov.uk/
+            user-info-uri: https://oidc.integration.account.gov.uk/userinfo
+            user-name-attribute: sub
+govuk:
+  onelogin:
+    private-key-resource: file:secret/private_key.pem
