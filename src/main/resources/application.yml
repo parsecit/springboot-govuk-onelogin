@@ -14,7 +14,7 @@ spring:
             client-id: ${ONELOGIN_CLIENT_ID}
             client-authentication-method: private_key_jwt
             authorization-grant-type: authorization_code
-            scope: openid
+            scope: openid, email, phone
             client-name: OneLogin
           dummy:
             # Dummy provider to see how Spring deals with there being more than one option.
