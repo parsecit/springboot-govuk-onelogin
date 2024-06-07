@@ -10,13 +10,31 @@ spring:
       client:
         registration:
           onelogin:
+            # Genuine OneLogin configuration
             client-id: ${ONELOGIN_CLIENT_ID}
             client-authentication-method: private_key_jwt
             authorization-grant-type: authorization_code
             scope: openid
             client-name: OneLogin
+          dummy:
+            # Dummy provider to see how Spring deals with there being more than one option.
+            client-id: dummy-client-id
+            client-authentication-method: private_key_jwt
+            authorization-grant-type: authorization_code
+            scope: openid
+            client-name: Dummy
         provider:
           onelogin:
+            # Genuine OneLogin configuration
+            authorization-uri: https://oidc.integration.account.gov.uk/authorize
+            token-uri: https://oidc.integration.account.gov.uk/token
+            jwk-set-uri: https://oidc.integration.account.gov.uk/.well-known/jwks.json
+            issuer-uri: https://oidc.integration.account.gov.uk/
+            user-info-uri: https://oidc.integration.account.gov.uk/userinfo
+            user-name-attribute: sub
+          dummy:
+            # Dummy provider to see how Spring deals with there being more than one option.
+            # Real values, since the URLs have to work for Spring to accept the configuration.
             authorization-uri: https://oidc.integration.account.gov.uk/authorize
             token-uri: https://oidc.integration.account.gov.uk/token
             jwk-set-uri: https://oidc.integration.account.gov.uk/.well-known/jwks.json
