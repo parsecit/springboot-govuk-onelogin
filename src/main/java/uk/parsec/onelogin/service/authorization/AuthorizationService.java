@@ -8,6 +8,11 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
+/*
+ * Encapsulates the code for retrieving the user's authorization token from the Spring security
+ * context.  Also generates the content of the standard bearer token HTTP header, and acts
+ * as a factory for a Spring interceptor which adds the header to requests.
+ */
 @Service
 public class AuthorizationService
 {

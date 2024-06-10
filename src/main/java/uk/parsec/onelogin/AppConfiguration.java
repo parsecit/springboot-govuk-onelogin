@@ -30,7 +30,12 @@ public class AppConfiguration
 	@Value("${govuk.onelogin.private-key-resource}")
 	Resource privateKeyFile;
 
-	// Useful starting point: https://dev.to/gregsimons/spring-security-privatekeyjwt-with-aws-kms-3cm4
+	/*
+	 * Configures the client for the back-end authorization code access token request to add
+	 * the request parameters needed to authenticate the request to OneLogin.
+	 *
+	 * Useful starting point: https://dev.to/gregsimons/spring-security-privatekeyjwt-with-aws-kms-3cm4
+	 */
 	@Bean
 	public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException
 	{
@@ -39,7 +44,12 @@ public class AppConfiguration
 		return client;
 	}
 
-	// See https://docs.spring.io/spring-security/reference/servlet/oauth2/login/advanced.html#oauth2login-advanced-idtoken-verify
+	/*
+	 * OneLogin (at the time of writing) uses ES256 to sign ID tokens.  This does not work out-of-the-box
+	 * with Spring Boot OIDC, and needs the JWT decoder to be specifically configured.
+	 *
+	 * See https://docs.spring.io/spring-security/reference/servlet/oauth2/login/advanced.html#oauth2login-advanced-idtoken-verify
+	 */
 	@Bean
 	public JwtDecoderFactory<ClientRegistration> idTokenDecoderFactory() {
 		OidcIdTokenDecoderFactory idTokenDecoderFactory = new OidcIdTokenDecoderFactory();
@@ -47,16 +57,14 @@ public class AppConfiguration
 		return idTokenDecoderFactory;
 	}
 
-//	@Bean
-//	public RestTemplate restTemplate(RestTemplateBuilder builder)
-//	{
-//		builder.additionalInterceptors((request, body, execution) -> {
-//			request.getHeaders().add("Authorization", "Bearer " + accessToken);
-//			return execution.execute(request, body);
-//		});
-//		return builder.build();
-//	}
-//
+	/*
+	 * The request entity converter creates a set of parameters to send as part of the back-end
+	 * authorization code request to the OIDC provider.  OneLogin requires a signed JWT token with
+	 * specific contents to be included in these parameters - signed by the private key for the
+	 * OneLogin service being accessed.
+	 *
+	 * This class extends the standard converter with the additional parameters.
+	 */
 	public static class Converter extends OAuth2AuthorizationCodeGrantRequestEntityConverter
 	{
 		private final Key privateKey;
@@ -69,7 +77,6 @@ public class AppConfiguration
 		protected MultiValueMap<String, String> createParameters(OAuth2AuthorizationCodeGrantRequest authorizationCodeGrantRequest)
 		{
 			MultiValueMap<String, String> parameters = super.createParameters(authorizationCodeGrantRequest);
-			System.out.println(parameters);
 
 			String signedJwt = Jwts.builder()
 					.claim("aud", "https://oidc.integration.account.gov.uk/token")
@@ -84,10 +91,13 @@ public class AppConfiguration
 			parameters.set("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
 			parameters.set("client_assertion", signedJwt);
 
-			System.out.println(parameters);
 			return parameters;
 		}
 
+		/*
+		 * Quick and dirty way of loading a private key while avoiding unnecessary library
+		 * dependencies.  Production code will have something better.
+		 */
 		private Key buildPrivateKey(Resource privateKeyFile) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException
 		{
 			String key = privateKeyFile.getContentAsString(StandardCharsets.UTF_8);

@@ -9,6 +9,10 @@ import uk.parsec.onelogin.service.userinfo.api.UserInfoApi;
 
 import java.util.Map;
 
+/*
+ * Provides information about the user, both from the local security context and by invoking
+ * the OneLogin /userinfo API.
+ */
 @Service
 public class UserInfoService
 {

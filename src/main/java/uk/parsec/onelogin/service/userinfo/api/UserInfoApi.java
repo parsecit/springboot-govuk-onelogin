@@ -7,6 +7,9 @@ import uk.parsec.onelogin.service.authorization.AuthorizationService;
 
 import java.util.Map;
 
+/*
+ * Simple RestTemplate wrapper for the OneLogin /userinfo endpoint.
+ */
 @Service
 public class UserInfoApi
 {
