@@ -7,7 +7,7 @@
     <title>Title</title>
 </head>
 <body>
-<h1>GovUK OneLogin Demo</h1>
+<h1>${applicationName}: GovUK OneLogin Demo</h1>
 <p><a href="https://oidc.integration.account.gov.uk/logout?post_logout_redirect_uri=http://localhost:8080/logout">Logout (GovUK)</a></p>
 <p><a href="/logout">Logout (Service)</a></p>
 

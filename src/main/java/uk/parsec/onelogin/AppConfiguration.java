@@ -78,10 +78,12 @@ public class AppConfiguration
 		{
 			MultiValueMap<String, String> parameters = super.createParameters(authorizationCodeGrantRequest);
 
+			String clientId = authorizationCodeGrantRequest.getClientRegistration().getClientId();
+
 			String signedJwt = Jwts.builder()
 					.claim("aud", "https://oidc.integration.account.gov.uk/token")
-					.claim("iss", "r4Wh7JKHakQDU5K2fRGAe3GowQk")
-					.claim("sub", "r4Wh7JKHakQDU5K2fRGAe3GowQk")
+					.claim("iss", clientId)
+					.claim("sub", clientId)
 					.claim("exp", "" + ((int)(System.currentTimeMillis() / 1000) + 5 * 60))
 					.claim("jti", "" + System.currentTimeMillis())
 					.claim("iat", "" + ((int)(System.currentTimeMillis() / 1000)))

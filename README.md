@@ -21,16 +21,21 @@ test service.  This will include establishing:
 ## Environment Variables
 Set these:
 
-| Variable           | Description                                                                |
-|--------------------|----------------------------------------------------------------------------|
-| ONELOGIN_CLIENT_ID | The OIDC client ID allocated to your service during OneLogin registration. |
+| Variable                                        | Description                                                                             |
+|-------------------------------------------------|-----------------------------------------------------------------------------------------|
+| ONELOGIN_CLIENT_ID *(mandatory)*                | The OIDC client ID allocated to your service during OneLogin registration.              |
+| ONELOGIN_PRIVATE_KEY_RESOURCE *(optional)*      | A Spring resource for the private key file (defaults to `file:secret/private_key.pem`). |
+| SERVER_PORT *(optional - standard Spring Boot)* | The port to run the application on.                                                     |
+| APPLICATION_NAME *(optional)*                   | The name of the application displayed in the title in the UI.                           |
 
-## Secrets
-The directory `secret` must contain:
+By setting different combinations of the above environment variables, multiple instances of the application can
+be run to represent multiple OneLogin services (each with its own client ID).  This is to allow for the testing of
+session and logout behaviour across multiple services.
 
-| File            | Description                                                                                         |
-|-----------------|-----------------------------------------------------------------------------------------------------|
-| private_key.pem | The private key corresponding to the public key you created and uploaded for your OneLogin service. |
+## Private Key
+You must provide the private key corresponding to the public key you created and uploaded for your OneLogin service.
+By default, this is expected to be in the file `secret/private_key.pem`, but this can be overridden using the
+`ONELOGIN_PRIVATE_KEY_RESOURCE` environment variable, as above.
 
 # Run
 - Run the Spring Boot application (`uk.parsec.onelogin.AppApplication`) in your development environment of choice.

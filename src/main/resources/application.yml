@@ -1,6 +1,6 @@
 spring:
   application:
-    name: OneLogin
+    name: ${APPLICATION_NAME:OneLogin}
   mvc:
     view:
       prefix: /WEB-INF/pages/
@@ -44,4 +44,4 @@ spring:
 govuk:
   onelogin:
     # Resource path for the private key for the key pair used with OneLogin
-    private-key-resource: file:secret/private_key.pem
+    private-key-resource: ${ONELOGIN_PRIVATE_KEY_RESOURCE:#{'file:secret/private_key.pem'}}
