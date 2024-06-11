@@ -41,6 +41,11 @@ spring:
             issuer-uri: https://oidc.integration.account.gov.uk/
             user-info-uri: https://oidc.integration.account.gov.uk/userinfo
             user-name-attribute: sub
+server:
+  servlet:
+    session:
+      cookie:
+        name: SESSION_ID_${ONELOGIN_CLIENT_ID}
 govuk:
   onelogin:
     # Resource path for the private key for the key pair used with OneLogin
