@@ -49,10 +49,6 @@ spring:
             user-info-uri: https://oidc.integration.account.gov.uk/userinfo
             user-name-attribute: sub
 server:
-  servlet:
-    session:
-      cookie:
-        name: SESSION_ID_${ONELOGIN_CLIENT_ID}
   ssl:
     bundle: default-bundle
 
