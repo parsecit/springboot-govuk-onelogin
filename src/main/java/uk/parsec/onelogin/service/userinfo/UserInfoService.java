@@ -1,9 +1,7 @@
 package uk.parsec.onelogin.service.userinfo;
 
-
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import uk.parsec.onelogin.service.userinfo.api.UserInfoApi;
 
@@ -25,10 +23,9 @@ public class UserInfoService
 
 	public String getUserPrincipalInfo()
 	{
-		OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Object principal = authentication.getPrincipal();
-		if (principal instanceof OidcUser oidcUser)	return oidcUser.toString();
-		else return null;
+		return principal.toString();
 	}
 
 	public Map<String, String> getUserInfo()

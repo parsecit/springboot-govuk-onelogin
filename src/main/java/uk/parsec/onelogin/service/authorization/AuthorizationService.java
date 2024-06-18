@@ -1,6 +1,7 @@
 package uk.parsec.onelogin.service.authorization;
 
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -25,11 +26,18 @@ public class AuthorizationService
 
 	public String getAuthorizationToken()
 	{
-		OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-		OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
-				authentication.getAuthorizedClientRegistrationId(), authentication.getName());
-		OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
-		return accessToken.getTokenValue();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication instanceof OAuth2AuthenticationToken authenticationToken)
+		{
+			OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
+					authenticationToken.getAuthorizedClientRegistrationId(), authenticationToken.getName());
+			OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
+			return accessToken.getTokenValue();
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	public String getBearerAuthorizationHeader()

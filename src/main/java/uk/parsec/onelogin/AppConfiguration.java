@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
@@ -13,6 +15,8 @@ import org.springframework.security.oauth2.client.oidc.authentication.OidcIdToke
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
@@ -112,5 +116,30 @@ public class AppConfiguration
 			PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decoded);
 			return keyFactory.generatePrivate(spec);
 		}
+	}
+
+	/*
+	 * Enable OIDC backchannel logout.
+	 *
+	 * See https://docs.spring.io/spring-security/reference/servlet/oauth2/login/logout.html
+	 */
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception
+	{
+		return
+			httpSecurity
+					.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+					.oauth2Login(Customizer.withDefaults())
+					.oidcLogout(logout -> logout.backChannel(Customizer.withDefaults()))
+					.build();
+	}
+
+	/*
+	 * Turn on publishing so that backchannel logout works.
+	 */
+	@Bean
+	public HttpSessionEventPublisher sessionEventPublisher()
+	{
+		return new HttpSessionEventPublisher();
 	}
 }
