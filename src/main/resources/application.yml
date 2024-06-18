@@ -5,6 +5,13 @@ spring:
     view:
       prefix: /WEB-INF/pages/
       suffix: .jsp
+  ssl:
+    bundle:
+      pem:
+        default-bundle:
+          keystore:
+            certificate: ${HTTPS_CERTIFICATE_RESOURCE:secret/server-certificate.pem}
+            private-key: ${HTTPS_PRIVATE_KEY_RESOURCE:secret/server-private-key.pem}
   security:
     oauth2:
       client:
@@ -46,6 +53,9 @@ server:
     session:
       cookie:
         name: SESSION_ID_${ONELOGIN_CLIENT_ID}
+  ssl:
+    bundle: default-bundle
+
 govuk:
   onelogin:
     # Resource path for the private key for the key pair used with OneLogin
