@@ -1,6 +1,7 @@
 package uk.parsec.onelogin;
 
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,10 +13,13 @@ import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResp
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequestEntityConverter;
 import org.springframework.security.oauth2.client.oidc.authentication.OidcIdTokenDecoderFactory;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.util.MultiValueMap;
 
@@ -31,6 +35,9 @@ import java.util.Base64;
 @Configuration
 public class AppConfiguration
 {
+	@Autowired
+	private ClientRegistrationRepository clientRegistrationRepository;
+
 	@Value("${govuk.onelogin.private-key-resource}")
 	Resource privateKeyFile;
 
@@ -131,7 +138,15 @@ public class AppConfiguration
 					.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
 					.oauth2Login(Customizer.withDefaults())
 					.oidcLogout(logout -> logout.backChannel(Customizer.withDefaults()))
+					.logout(logout -> logout.logoutSuccessHandler(oidcLogoutSuccessHandler()))
 					.build();
+	}
+
+	private LogoutSuccessHandler oidcLogoutSuccessHandler()
+	{
+		OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(this.clientRegistrationRepository);
+		oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
+		return oidcLogoutSuccessHandler;
 	}
 
 	/*
