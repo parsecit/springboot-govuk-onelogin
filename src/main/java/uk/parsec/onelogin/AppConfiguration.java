@@ -1,11 +1,17 @@
 package uk.parsec.onelogin;
 
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.NonNull;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
@@ -22,6 +28,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.filter.AbstractRequestLoggingFilter;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +39,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
+import java.util.Set;
 
 @Configuration
 public class AppConfiguration
@@ -156,5 +165,37 @@ public class AppConfiguration
 	public HttpSessionEventPublisher sessionEventPublisher()
 	{
 		return new HttpSessionEventPublisher();
+	}
+
+	/*
+	 * Logging so that we can confirm the backchannel logout requests are being received.
+	 */
+	@Bean
+	public FilterRegistrationBean<RequestLoggingFilter> logFilter()
+	{
+		FilterRegistrationBean<RequestLoggingFilter> filterRegistrationBean = new FilterRegistrationBean<>();
+		filterRegistrationBean.setName("Request logging filter");
+		// Run before the security filter starts redirecting things ...
+		filterRegistrationBean.setOrder(SecurityProperties.DEFAULT_FILTER_ORDER - 1);
+		filterRegistrationBean.setFilter(new RequestLoggingFilter());
+		return filterRegistrationBean;
+	}
+
+	public static class RequestLoggingFilter extends AbstractRequestLoggingFilter
+	{
+		private static final Logger logger = LoggerFactory.getLogger(RequestLoggingFilter.class);
+
+		@Override
+		protected void beforeRequest(@NonNull HttpServletRequest request, @NonNull String message)
+		{
+			logger.debug(message);
+			String query = request.getQueryString();
+			logger.debug("{} {}{}", request.getMethod(), request.getRequestURI(), query == null ? "" : "?" + query);
+		}
+
+		@Override
+		protected void afterRequest(@NonNull HttpServletRequest request, @NonNull String message)
+		{
+		}
 	}
 }
