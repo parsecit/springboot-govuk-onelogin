@@ -62,3 +62,9 @@ By default, this is expected to be in the file `secret/private_key.pem`, but thi
   [OneLogin configuration page for your service](https://admin.sign-in.service.gov.uk/services).  These credentials
   are supplied using HTTP BASIC authentication, so are mostly cached by your browser once entered the first time,
   but may need to be re-entered periodically.
+- To test back channel logout the application needs to be deployed on an internet host with an address which can be
+  entered in the OneLogin admin UI (i.e. localhost will not do).  And it must use HTTPS.  For this Spring Boot-based
+  implementation, the back channel logout URI looks like `https://<host>:<port>/logout/connect/back-channel/onelogin`,
+  where the last path element (`onelogin`) corresponds to the name of the OneLogin client registration in the
+  `application.yml` configuration file.  At time of writing, back channel logout has not been tested because of a
+  bug in OneLogin - the logout URI entered in the admin UI is not being set in the OneLogin service.
