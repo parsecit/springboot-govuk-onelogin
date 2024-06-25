@@ -33,7 +33,7 @@ spring:
         provider:
           onelogin:
             # Genuine OneLogin configuration
-            authorization-uri: https://oidc.integration.account.gov.uk/authorize
+            authorization-uri: https://oidc.integration.account.gov.uk/authorize?prompt=login
             token-uri: https://oidc.integration.account.gov.uk/token
             jwk-set-uri: https://oidc.integration.account.gov.uk/.well-known/jwks.json
             issuer-uri: https://oidc.integration.account.gov.uk/
