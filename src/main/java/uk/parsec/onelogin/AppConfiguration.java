@@ -144,6 +144,7 @@ public class AppConfiguration
 	{
 		return
 			httpSecurity
+					.authorizeHttpRequests(authorize -> authorize.requestMatchers("/favicon.ico").permitAll())
 					.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
 					.oauth2Login(Customizer.withDefaults())
 					.oidcLogout(logout -> logout.backChannel(Customizer.withDefaults()))
