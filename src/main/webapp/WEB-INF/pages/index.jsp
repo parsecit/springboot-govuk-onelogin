@@ -11,12 +11,15 @@
 
 <body>
 <h1>${applicationName}: GovUK OneLogin Demo</h1>
-<p><a href="https://oidc.integration.account.gov.uk/logout?post_logout_redirect_uri=${logoutUri}">Logout (GovUK)</a></p>
+<p><a href="https://oidc.integration.account.gov.uk/logout?post_logout_redirect_uri=${logoutUri}&id_token_hint=${userPrincipal.getIdToken().getTokenValue()}">Logout (GovUK)</a></p>
 <p>${logoutUri}</p>
 <p><a href="/logout">Logout (Service)</a></p>
 
 <h2>User Principal</h2>
-<p>${userPrincipal}</p>
+<p>${userPrincipal.toString()}</p>
+
+<h2>ID Token</h2>
+<p>${userPrincipal.getIdToken().getTokenValue()}</p>
 
 <h2>User Info</h2>
 <p>${userInfo}</p>

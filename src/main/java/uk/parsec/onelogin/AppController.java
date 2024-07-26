@@ -32,7 +32,7 @@ public class AppController
 	@GetMapping("/")
 	public String sayHello(Model model, HttpServletRequest request) throws MalformedURLException
 	{
-		model.addAttribute("userPrincipal", userInfoService.getUserPrincipalInfo());
+		model.addAttribute("userPrincipal", userInfoService.getOidcPrincipal());
 		model.addAttribute("userInfo", userInfoService.getUserInfo());
 		model.addAttribute("authorizationToken", authorizationService.getAuthorizationToken());
 		model.addAttribute("applicationName", applicationName);
