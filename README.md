@@ -13,7 +13,7 @@ how to make OneLogin work, so I published the results of my investigations in ca
 same situtation.  Any non-backward-compatible changes in the dependencies or OneLogin can break things, and
 I won't be fixing it, unless I need to come back to this for my own purposes.
 
-In the end, although I did some work to get back-channel login working, I didn't fully test it out.
+In the end, although I did some work to get back-channel logout working, I didn't fully test it out.
 
 # Set Up
 
